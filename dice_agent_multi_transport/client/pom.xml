@@ -6,37 +6,15 @@
 
     <parent>
         <groupId>com.samples.a2a</groupId>
-        <artifactId>agents-parent</artifactId>
+        <artifactId>dice-agent-multi-transport</artifactId>
         <version>0.1.0</version>
     </parent>
 
-    <artifactId>pingable</artifactId>
+    <artifactId>dice-agent-client</artifactId>
+    <name>Dice Agent Client</name>
+    <description>A2A Dice Agent Test Client</description>
 
     <dependencies>
-        <dependency>
-            <groupId>io.github.a2asdk</groupId>
-            <artifactId>a2a-java-sdk-reference-jsonrpc</artifactId>
-            <version>${io.a2a.sdk.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest-jackson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.enterprise</groupId>
-            <artifactId>jakarta.enterprise.cdi-api</artifactId>
-            <version>${jakarta.enterprise.cdi-api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkiverse.langchain4j</groupId>
-            <artifactId>quarkus-langchain4j-ai-gemini</artifactId>
-            <version>${quarkus.langchain4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.a2asdk</groupId>
-            <artifactId>a2a-java-sdk-client</artifactId>
-            <version>${io.a2a.sdk.version}</version>
-        </dependency>
         <dependency>
             <groupId>io.github.a2asdk</groupId>
             <artifactId>a2a-java-sdk-client</artifactId>
@@ -56,7 +34,6 @@
             <artifactId>grpc-netty-shaded</artifactId>
             <scope>runtime</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -66,10 +43,12 @@
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.samples.a2a.TestClient</mainClass>
+                </configuration>
             </plugin>
-
         </plugins>
     </build>
 </project>

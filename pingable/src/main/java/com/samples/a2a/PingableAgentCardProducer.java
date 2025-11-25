@@ -29,12 +29,10 @@ public final class PingableAgentCardProducer {
   @PublicAgentCard
   public AgentCard agentCard() {
     return new AgentCard.Builder()
-        .name("Content Writer Agent")
+        .name("Pingable Agent")
         .description(
-            "An agent that can write a "
-                + "comprehensive and engaging piece of content "
-                + "based on the provided outline and high-level "
-                + "description of the content")
+            "An agent that can receive ping and replies with pong."
+        )
         .url("http://localhost:" + httpPort)
         .version("1.0.0")
         .documentationUrl("http://example.com/docs")
@@ -49,19 +47,14 @@ public final class PingableAgentCardProducer {
         .skills(
             Collections.singletonList(
                 new AgentSkill.Builder()
-                    .id("writer")
-                    .name("Writes content using an outline")
+                    .id("ping")
+                    .name("Ping")
                     .description(
-                        "Writes content using a given "
-                            + "outline and high-level description of "
-                            + "the content")
-                    .tags(List.of("writer"))
+                        "Receive a ping and would reply with a pong")
+                    .tags(List.of("ping"))
                     .examples(
                         List.of(
-                            "Write a short, upbeat, and "
-                                + "encouraging twitter post about learning "
-                                + "Java. Base your writing on the given "
-                                + "outline."))
+                            "ping"))
                     .build()))
         .protocolVersion("0.3.0")
         .build();
