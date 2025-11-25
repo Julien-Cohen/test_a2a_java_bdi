@@ -6,6 +6,8 @@ import io.a2a.A2A;
 import io.a2a.client.*;
 import io.a2a.client.config.ClientConfig;
 import io.a2a.client.http.A2ACardResolver;
+import io.a2a.client.http.A2AHttpClient;
+import io.a2a.client.http.JdkA2AHttpClient;
 import io.a2a.client.transport.grpc.GrpcTransport;
 import io.a2a.client.transport.grpc.GrpcTransportConfig;
 import io.a2a.client.transport.jsonrpc.JSONRPCTransport;
@@ -91,7 +93,7 @@ public final class PingableAgentExecutorProducer {
             }
             // complete the task
             updater.complete();
-            //send_pong(context.getConfiguration().pushNotificationConfig().url());
+            send_pong(context.getConfiguration().pushNotificationConfig().url());
         }
 
         private String extractTextFromMessage(final Message message) {
@@ -158,6 +160,11 @@ public final class PingableAgentExecutorProducer {
             ClientConfig clientConfig = new ClientConfig.Builder()
                     .setAcceptedOutputModes(List.of("Text"))
                     .build();
+            // Create a custom HTTP client
+            //A2AHttpClient customHttpClient = ...
+            //HttpClient c1 = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).followRedirects(HttpClient.Redirect.NORMAL).build();
+            //A2AHttpClient c2 ;
+            //JdkA2AHttpClient myHttpClient;
 
             // Create the client with both JSON-RPC and gRPC transport support.
             // The A2A server agent's preferred transport is gRPC, since the client
@@ -167,6 +174,7 @@ public final class PingableAgentExecutorProducer {
                     .streamingErrorHandler(streamingErrorHandler)
                     .withTransport(JSONRPCTransport.class,
                             new JSONRPCTransportConfig())
+                    //.withTransport(RestTransport.class, new RestTransportConfig())
                     .clientConfig(clientConfig)
                     .build();
 
@@ -200,6 +208,7 @@ public final class PingableAgentExecutorProducer {
             }
 
         }
+
         private static List<BiConsumer<ClientEvent, AgentCard>> getConsumers(
                 final CompletableFuture<String> messageResponse) {
             List<BiConsumer<ClientEvent, AgentCard>> consumers = new ArrayList<>();

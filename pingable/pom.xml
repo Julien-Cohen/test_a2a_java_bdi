@@ -39,11 +39,6 @@
         </dependency>
         <dependency>
             <groupId>io.github.a2asdk</groupId>
-            <artifactId>a2a-java-sdk-client</artifactId>
-            <version>${io.a2a.sdk.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.a2asdk</groupId>
             <artifactId>a2a-java-sdk-client-transport-grpc</artifactId>
             <version>${io.a2a.sdk.version}</version>
         </dependency>
@@ -55,6 +50,17 @@
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty-shaded</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.a2asdk</groupId>
+            <artifactId>a2a-java-sdk-reference-rest</artifactId>
+            <!-- Use a released version from https://github.com/a2aproject/a2a-java/releases -->
+            <version>${io.a2a.sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.a2asdk</groupId>
+            <artifactId>a2a-java-sdk-http-client</artifactId>
+            <version>0.3.2.Final</version>
         </dependency>
 
     </dependencies>
