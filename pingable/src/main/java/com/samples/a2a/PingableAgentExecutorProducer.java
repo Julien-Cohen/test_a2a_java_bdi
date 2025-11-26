@@ -6,8 +6,6 @@ import io.a2a.A2A;
 import io.a2a.client.*;
 import io.a2a.client.config.ClientConfig;
 import io.a2a.client.http.A2ACardResolver;
-import io.a2a.client.http.A2AHttpClient;
-import io.a2a.client.http.JdkA2AHttpClient;
 import io.a2a.client.transport.grpc.GrpcTransport;
 import io.a2a.client.transport.grpc.GrpcTransportConfig;
 import io.a2a.client.transport.jsonrpc.JSONRPCTransport;
@@ -53,7 +51,7 @@ public final class PingableAgentExecutorProducer {
      */
     private static class PingableAgentExecutor implements AgentExecutor {
 
-
+        static final String myUrl = "http://127.0.0.1:9998";
 
         static TextPart buildBDITextPart(String illoc, String codec, String content){
             Map<String, Object> md = new Hashtable<>();
@@ -88,7 +86,7 @@ public final class PingableAgentExecutorProducer {
             }
             // complete the task
             updater.complete();
-            //send_pong(context.getConfiguration().pushNotificationConfig().url());
+            spawn_send_pong(context.getConfiguration().pushNotificationConfig().url());
         }
 
         private String extractTextFromMessage(final Message message) {
@@ -123,85 +121,96 @@ public final class PingableAgentExecutorProducer {
             updater.cancel();
         }
 
-        void send_pong(String serverUrl) {
-            try {
-                System.out.println("Connecting to agent at: " + serverUrl);
-            AgentCard publicAgentCard =
-                    new A2ACardResolver(serverUrl).getAgentCard();
-            System.out.println("Successfully fetched public agent card:");
-            System.out.println(OBJECT_MAPPER.writeValueAsString(publicAgentCard));
-            System.out.println("Using public agent card for client initialization.");
+        void spawn_send_pong(String serverUrl) {
+            class MyRunnable implements Runnable {
 
-            // Create a CompletableFuture to handle async response
-            final CompletableFuture<String> messageResponse
-                    = new CompletableFuture<>();
+                @Override
+                public void run() {
+                    try {
+                        System.out.println("Connecting to agent at: " + serverUrl);
+                        AgentCard publicAgentCard =
+                                new A2ACardResolver(serverUrl).getAgentCard();
+                        System.out.println("Successfully fetched public agent card:");
+                        System.out.println(OBJECT_MAPPER.writeValueAsString(publicAgentCard));
+                        System.out.println("Using public agent card for client initialization.");
 
-            // Create consumers for handling client events
-            List<BiConsumer<ClientEvent, AgentCard>> consumers
-                    = getConsumers(messageResponse);
+                        // Create a CompletableFuture to handle async response
+                        final CompletableFuture<String> messageResponse
+                                = new CompletableFuture<>();
 
-            // Create error handler for streaming errors
-            Consumer<Throwable> streamingErrorHandler = (error) -> {
-                System.out.println("Streaming error occurred: " + error.getMessage());
-                error.printStackTrace();
-                messageResponse.completeExceptionally(error);
-            };
+                        // Create consumers for handling client events
+                        List<BiConsumer<ClientEvent, AgentCard>> consumers
+                                = getConsumers(messageResponse);
 
-            // Create channel factory for gRPC transport
-            Function<String, Channel> channelFactory = agentUrl -> {
-                return ManagedChannelBuilder.forTarget(agentUrl).usePlaintext().build();
-            };
+                        // Create error handler for streaming errors
+                        Consumer<Throwable> streamingErrorHandler = (error) -> {
+                            System.out.println("***!!!***!!! Streaming error occurred: " + error.getMessage());
+                            //error.printStackTrace();
+                            messageResponse.completeExceptionally(error);
+                        };
 
-            ClientConfig clientConfig = new ClientConfig.Builder()
-                    .setAcceptedOutputModes(List.of("Text"))
-                    .build();
-            // Create a custom HTTP client
-            //A2AHttpClient customHttpClient = ...
-            //HttpClient c1 = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).followRedirects(HttpClient.Redirect.NORMAL).build();
-            //A2AHttpClient c2 ;
-            //JdkA2AHttpClient myHttpClient;
+                        // Create channel factory for gRPC transport
+                        Function<String, Channel> channelFactory = agentUrl -> {
+                            return ManagedChannelBuilder.forTarget(agentUrl).usePlaintext().build();
+                        };
 
-            // Create the client with both JSON-RPC and gRPC transport support.
-            // The A2A server agent's preferred transport is gRPC, since the client
-            // also supports gRPC, this is the transport that will get used
-            Client client = Client.builder(publicAgentCard)
-                    .addConsumers(consumers)
-                    .streamingErrorHandler(streamingErrorHandler)
-                    .withTransport(JSONRPCTransport.class,
-                            new JSONRPCTransportConfig())
-                    //.withTransport(RestTransport.class, new RestTransportConfig())
-                    .clientConfig(clientConfig)
-                    .build();
+                        ClientConfig clientConfig = new ClientConfig.Builder()
+                                .setAcceptedOutputModes(List.of("Text"))
+                                .setPushNotificationConfig(new PushNotificationConfig(myUrl, null, null, null))
+                                .build();
+                        // Create a custom HTTP client
+                        //A2AHttpClient customHttpClient = ...
+                        //HttpClient c1 = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).followRedirects(HttpClient.Redirect.NORMAL).build();
+                        //A2AHttpClient c2 ;
+                        //JdkA2AHttpClient myHttpClient;
 
-            // Create and send the message
-            Message message = A2A.toUserMessage(messageText);
-            //Message.Builder b = new Message.Builder();
-            //Map<String, Object> m = new HashMap<>();
-            //m.put("illocution", "tell");
-            //m.put("codec", "tmp_codec");
-            //b.metadata(m) ;
-            //b.parts(Collections.singletonList(new TextPart("pong")));
-            //b.role(Message.Role.AGENT);
-            //Message message = b.build();
+                        // Create the client with both JSON-RPC and gRPC transport support.
+                        // The A2A server agent's preferred transport is gRPC, since the client
+                        // also supports gRPC, this is the transport that will get used
+                        Client client = Client.builder(publicAgentCard)
+                                .addConsumers(consumers)
+                                .streamingErrorHandler(streamingErrorHandler)
+                                .withTransport(GrpcTransport.class,
+                                        new GrpcTransportConfig(channelFactory))
+                                .withTransport(JSONRPCTransport.class,
+                                        new JSONRPCTransportConfig())
+                                //.withTransport(RestTransport.class, new RestTransportConfig())
+                                .clientConfig(clientConfig)
+                                .build();
 
-            System.out.println("Sending message: " + messageText);
-            client.sendMessage(message);
-            System.out.println("Message sent successfully. Waiting for response...");
+                        // Create and send the message
+                        Message message = A2A.toUserMessage(messageText);
+                        //Message.Builder b = new Message.Builder();
+                        //Map<String, Object> m = new HashMap<>();
+                        //m.put("illocution", "tell");
+                        //m.put("codec", "tmp_codec");
+                        //b.metadata(m) ;
+                        //b.parts(Collections.singletonList(new TextPart("pong")));
+                        //b.role(Message.Role.AGENT);
+                        //Message message = b.build();
 
-            try {
-                // Wait for response with timeout
-                String responseText = messageResponse.get();
-                System.out.println("Final response: " + responseText);
-            } catch (Exception e) {
-                System.err.println("Failed to get response: " + e.getMessage());
-                e.printStackTrace();
+                        System.out.println("Sending message: " + messageText);
+                        client.sendMessage(message);
+                        System.out.println("Message sent successfully. Waiting for response...");
+
+                        try {
+                            // Wait for response with timeout
+                            String responseText = messageResponse.get();
+                            System.out.println("Final response: " + responseText);
+                        } catch (Exception e) {
+                            System.err.println("Failed to get response: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+
+                    } catch (Exception e) {
+                        System.err.println("An error occurred: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
             }
-
-            } catch (Exception e) {
-                System.err.println("An error occurred: " + e.getMessage());
-                e.printStackTrace();
-            }
-
+            Thread t = new Thread(new MyRunnable());
+            t.start();
+            System.out.println("Sending thread started.");
         }
 
         private static List<BiConsumer<ClientEvent, AgentCard>> getConsumers(

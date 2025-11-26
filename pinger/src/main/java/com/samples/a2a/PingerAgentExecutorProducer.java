@@ -87,7 +87,6 @@ public final class PingerAgentExecutorProducer {
             else {
                 eventQueue.enqueueEvent(A2A.toAgentMessage("KO : Unknown request."));
                 System.out.println(assignment);
-                // create the response part
                 System.out.println("Unknown request (only receive ping requests)." );
                 System.exit(0);
             }
