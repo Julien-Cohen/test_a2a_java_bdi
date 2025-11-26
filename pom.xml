@@ -11,6 +11,7 @@
 
     <modules>
         <module>pingable</module>
+        <module>pinger</module>
     </modules>
 
     <properties>

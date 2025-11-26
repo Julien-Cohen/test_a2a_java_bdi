@@ -1,4 +1,4 @@
-package com.samples.a2a;
+package com.samples.a2a.pingable;
 
 import io.a2a.server.PublicAgentCard;
 import io.a2a.spec.AgentCapabilities;
@@ -13,7 +13,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /** Producer for Content Writer Agent Card. */
 @ApplicationScoped
-public final class PingerAgentCardProducer {
+public final class PingableAgentCardProducer {
 
   /** HTTP port for the agent. */
   @Inject
@@ -29,9 +29,9 @@ public final class PingerAgentCardProducer {
   @PublicAgentCard
   public AgentCard agentCard() {
     return new AgentCard.Builder()
-        .name("Pinger Agent")
+        .name("Pingable Agent")
         .description(
-            "An agent that can send ping and receive pong."
+            "An agent that can receive ping and replies with pong."
         )
         .url("http://localhost:" + httpPort)
         .version("1.0.0")
@@ -47,14 +47,14 @@ public final class PingerAgentCardProducer {
         .skills(
             Collections.singletonList(
                 new AgentSkill.Builder()
-                    .id("pong")
-                    .name("Pong")
+                    .id("ping")
+                    .name("Ping")
                     .description(
-                        "Receive a pong")
-                    .tags(List.of("pong"))
+                        "Receive a ping and would reply with a pong")
+                    .tags(List.of("ping"))
                     .examples(
                         List.of(
-                            "pong"))
+                            "ping"))
                     .build()))
         .protocolVersion("0.3.3.Final")
         .build();
