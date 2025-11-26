@@ -90,7 +90,7 @@ public final class PingableAgentExecutorProducer {
 
         }
 
-        private String extractTextFromMessage(final Message message) {
+        static String extractTextFromMessage(final Message message) {
             final StringBuilder textBuilder = new StringBuilder();
             if (message.getParts() != null) {
                 for (final Part part : message.getParts()) {
@@ -103,9 +103,9 @@ public final class PingableAgentExecutorProducer {
         }
 
 
-        String extractIllocutionFromMessage(final Message m){
+        static String extractIllocutionFromMessage(final Message m){
             List<Part<?>> l = m.getParts() ;
-            if (l != null && l.size() != 0) {
+            if (l != null && !l.isEmpty()) {
                 Part<?> p = l.get(0) ;
                 Map<String,Object> md = p.getMetadata();
                 if (md != null)
@@ -114,9 +114,9 @@ public final class PingableAgentExecutorProducer {
             return null ;
         }
 
-        String extractCodecFromMessage(final Message m){
+        static String extractCodecFromMessage(final Message m){
             List<Part<?>> l = m.getParts() ;
-            if (l != null && l.size() != 0) {
+            if (l != null && !l.isEmpty()) {
                 Part<?> p = l.get(0) ;
                 Map<String,Object> md = p.getMetadata();
                 if (md != null) {
