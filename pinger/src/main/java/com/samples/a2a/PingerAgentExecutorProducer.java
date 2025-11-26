@@ -73,37 +73,25 @@ public final class PingerAgentExecutorProducer {
             final String assignment = extractTextFromMessage(context.getMessage());
 
             if (assignment.equals("pong")) {
+                eventQueue.enqueueEvent(A2A.toAgentMessage("OK : Pong received."));
                 System.out.println("Received a pong");
-                // create the response part
-                final TextPart responsePart = buildBDITextPart("ok", "tell", "atom_codec");
-                final List<Part<?>> parts = List.of(responsePart);
 
-                // add the response as an artifact
-                //updater.addArtifact(parts, null, null, null);
-                // complete the task
-                //updater.complete();
             }
             else if (assignment.startsWith("do_ping")){
                 System.out.println("Synchronous reply OK.");
-                final TextPart responsePart = new TextPart("OK");
-                final List<Part<?>> parts = List.of(responsePart);
-
-                // add the response as an artifact
-                //updater.addArtifact(parts, null, null, null);
-                // complete the task
-                //updater.complete();
-
+                eventQueue.enqueueEvent(A2A.toAgentMessage("OK : do_ping received."));
                 System.out.println("Send PING to other agent.");
                 this.spawn_send_ping(otherAgentUrl);
                 System.out.println("End spawn sending thread.");
             }
             else {
+                eventQueue.enqueueEvent(A2A.toAgentMessage("KO : Unknown request."));
                 System.out.println(assignment);
                 // create the response part
                 System.out.println("Unknown request (only receive ping requests)." );
                 System.exit(0);
             }
-            eventQueue.enqueueEvent(A2A.toAgentMessage("OK."));
+
         }
 
         private String extractTextFromMessage(final Message message) {
