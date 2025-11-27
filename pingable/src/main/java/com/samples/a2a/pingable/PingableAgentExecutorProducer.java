@@ -52,7 +52,7 @@ public final class PingableAgentExecutorProducer extends BDIAgentExecutor {
                 System.out.println("Received a achieve/ping request");
                 eventQueue.enqueueEvent(A2A.toAgentMessage("OK : achieve/ping received."));
 
-                spawn_send_pong(context.getConfiguration().pushNotificationConfig().url(), myUrl, "tell", "atom", messageText);
+                spawn_send_pong(context.getConfiguration().pushNotificationConfig().url(), myUrl, "tell", "atom_codec", messageText);
             }
             else {
                 eventQueue.enqueueEvent(A2A.toAgentMessage("KO : Unknown request."));
