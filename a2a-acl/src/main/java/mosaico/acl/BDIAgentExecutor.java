@@ -29,7 +29,7 @@ import java.util.function.Function;
 public class BDIAgentExecutor {
     static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    static String extractTextFromMessage(final Message message) {
+    public static String extractTextFromMessage(final Message message) {
         final StringBuilder textBuilder = new StringBuilder();
         if (message.getParts() != null) {
             for (final Part part : message.getParts()) {
@@ -41,7 +41,7 @@ public class BDIAgentExecutor {
         return textBuilder.toString();
     }
 
-    static String extractIllocutionFromMessage(final Message m){
+    public static String extractIllocutionFromMessage(final Message m){
         List<Part<?>> l = m.getParts() ;
         if (l != null && !l.isEmpty()) {
             Part<?> p = l.get(0) ;
@@ -52,7 +52,7 @@ public class BDIAgentExecutor {
         return null ;
     }
 
-    static String extractCodecFromMessage(final Message m){
+    public static String extractCodecFromMessage(final Message m){
         List<Part<?>> l = m.getParts() ;
         if (l != null && !l.isEmpty()) {
             Part<?> p = l.get(0) ;
@@ -83,7 +83,7 @@ public class BDIAgentExecutor {
         return new TextPart(content, md);
     }
 
-    static void spawn_send_pong(String toUrl, final String replyToUrl, final String illocution, final String codec, final String content) {
+    public static void spawn_send_pong(String toUrl, final String replyToUrl, final String illocution, final String codec, final String content) {
         class MyRunnable implements Runnable {
 
             @Override

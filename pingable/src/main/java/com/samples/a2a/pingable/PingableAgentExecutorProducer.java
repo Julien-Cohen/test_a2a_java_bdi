@@ -8,6 +8,7 @@ import io.a2a.server.tasks.TaskUpdater;
 import io.a2a.spec.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
+import mosaico.acl.BDIAgentExecutor;
 
 
 /**

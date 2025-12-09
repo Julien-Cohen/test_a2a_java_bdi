@@ -67,6 +67,12 @@
             <artifactId>a2a-java-sdk-http-client</artifactId>
             <version>0.3.2.Final</version>
         </dependency>
+        <dependency>
+            <groupId>com.samples.a2a</groupId>
+            <artifactId>a2a-acl</artifactId>
+            <version>0.1.0</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 
