@@ -27,9 +27,8 @@ public final class PingableAgentExecutorProducer extends BDIAgentExecutor {
         return new PingableAgentExecutor();
     }
 
-    static String messageText = "pong";
     /**
-     * Agent executor implementation for content writer.
+     * Agent executor implementation for ping service.
      */
     private static class PingableAgentExecutor implements AgentExecutor {
 
@@ -41,18 +40,18 @@ public final class PingableAgentExecutorProducer extends BDIAgentExecutor {
 
             // extract the text from the message
             Message message = context.getMessage();
-            final String assignment = extractTextFromMessage(message);
+            final String content = extractTextFromMessage(message);
             final String illoc = extractIllocutionFromMessage(message) ;
             System.out.println("Message illocution: "+ illoc);
             final String codec = extractCodecFromMessage(message);
             System.out.println("Content codec: "+ codec);
 
 
-            if (assignment.equals("ping") && illoc!= null && illoc.equals("achieve")) {
+            if (content.equals("ping") && illoc!= null && illoc.equals("achieve")) {
                 System.out.println("Received a achieve/ping request");
                 eventQueue.enqueueEvent(A2A.toAgentMessage("OK : achieve/ping received."));
 
-                spawn_send_pong(context.getConfiguration().pushNotificationConfig().url(), myUrl, "tell", "atom_codec", messageText);
+                spawn_send_message(context.getConfiguration().pushNotificationConfig().url(), myUrl, "tell", "atom_codec", "pong");
             }
             else {
                 eventQueue.enqueueEvent(A2A.toAgentMessage("KO : Unknown request."));

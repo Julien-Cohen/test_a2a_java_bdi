@@ -83,7 +83,7 @@ public class BDIAgentExecutor {
         return new TextPart(content, md);
     }
 
-    public static void spawn_send_pong(String toUrl, final String replyToUrl, final String illocution, final String codec, final String content) {
+    public static void spawn_send_message(String toUrl, final String replyToUrl, final String illocution, final String codec, final String content) {
         class MyRunnable implements Runnable {
 
             @Override
