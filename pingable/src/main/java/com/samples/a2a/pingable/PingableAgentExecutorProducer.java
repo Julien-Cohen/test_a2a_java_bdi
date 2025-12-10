@@ -40,7 +40,7 @@ public final class PingableAgentExecutorProducer {
 
             if (m.content().equals("ping") && m.illocution()!= null && m.illocution().equals("achieve")) {
                 System.out.println("Received a achieve/ping request");
-                eventQueue.enqueueEvent(A2A.toAgentMessage("OK : achieve/ping received."));
+                eventQueue.enqueueEvent(A2A.toAgentMessage("Ack : achieve/ping received."));
 
                 spawn_send_message(m.sender(), myUrl, "tell", "atom_codec", "pong");
             }

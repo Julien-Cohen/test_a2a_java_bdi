@@ -94,12 +94,10 @@ public abstract class BDIAgentExecutor implements AgentExecutor {
             @Override
             public void run() {
                 try {
-                    System.out.println("Connecting to agent at: " + toUrl);
+                    System.out.println("(Connecting to agent at: " + toUrl + ")");
                     AgentCard publicAgentCard =
                             new A2ACardResolver(toUrl).getAgentCard();
-                    System.out.println("Successfully fetched public agent card:");
-                    System.out.println(OBJECT_MAPPER.writeValueAsString(publicAgentCard));
-                    System.out.println("Using public agent card for client initialization.");
+                    System.out.println("(Successfully fetched public agent card)");
 
                     // Create a CompletableFuture to handle async response
                     final CompletableFuture<String> messageResponse
@@ -146,28 +144,26 @@ public abstract class BDIAgentExecutor implements AgentExecutor {
                     Message.Builder messageBuilder = (new Message.Builder()).role(Message.Role.AGENT).parts(Collections.singletonList(p));
                     Message message = messageBuilder.build();
 
-                    System.out.println("Sending message: " + content);
+                    System.out.println("(Sending message: " + content + ")");
                     client.sendMessage(message);
-                    System.out.println("Message sent successfully. Waiting for response...");
+                    System.out.println("(Message sent successfully. Handling sync response.)");
 
                     try {
                         // Wait for response with timeout
                         String responseText = messageResponse.get();
-                        System.out.println("Final response: " + responseText);
+                        System.out.println("Synchronous response: " + responseText);
                     } catch (Exception e) {
-                        System.err.println("Failed to get response: " + e.getMessage());
-                        e.printStackTrace();
+                        System.err.println("Error while getting synchronous response: " + e.getMessage());
                     }
 
                 } catch (Exception e) {
                     System.err.println("An error occurred: " + e.getMessage());
-                    e.printStackTrace();
                 }
             }
         }
         Thread t = new Thread(new MyRunnable());
         t.start();
-        System.out.println("Sending thread started.");
+        System.out.println("(Sending thread started.)");
     }
 
     static List<BiConsumer<ClientEvent, AgentCard>> getConsumers(
@@ -178,15 +174,15 @@ public abstract class BDIAgentExecutor implements AgentExecutor {
                     if (event instanceof MessageEvent messageEvent) {
                         Message responseMessage = messageEvent.getMessage();
                         String text = extractTextFromParts(responseMessage.getParts());
-                        System.out.println("Received message: " + text);
+                        System.out.println("(Consume message: " + text + ")");
                         messageResponse.complete(text);
                     } else if (event instanceof TaskUpdateEvent taskUpdateEvent) {
                         UpdateEvent updateEvent = taskUpdateEvent.getUpdateEvent();
                         if (updateEvent
                                 instanceof TaskStatusUpdateEvent taskStatusUpdateEvent) {
                             System.out.println(
-                                    "Received status-update: "
-                                            + taskStatusUpdateEvent.getStatus().state().asString());
+                                    "(Consume status-update: "
+                                            + taskStatusUpdateEvent.getStatus().state().asString() + ")");
                             if (taskStatusUpdateEvent.isFinal()) {
                                 StringBuilder textBuilder = new StringBuilder();
                                 List<Artifact> artifacts
@@ -203,11 +199,11 @@ public abstract class BDIAgentExecutor implements AgentExecutor {
                                     .getArtifact()
                                     .parts();
                             String text = extractTextFromParts(parts);
-                            System.out.println("Received artifact-update: " + text);
+                            System.out.println("(Consume artifact-update: " + text + ")");
                         }
                     } else if (event instanceof TaskEvent taskEvent) {
-                        System.out.println("Received task event: "
-                                + taskEvent.getTask().getId());
+                        System.out.println("(Consume task event: "
+                                + taskEvent.getTask().getId() + ")");
                     }
                 });
         return consumers;
@@ -231,9 +227,7 @@ public abstract class BDIAgentExecutor implements AgentExecutor {
         Message message = context.getMessage();
         final String content = extractTextFromMessage(message);
         final String illoc = extractIllocutionFromMessage(message);
-        System.out.println("Message illocution: " + illoc);
         final String codec = extractCodecFromMessage(message);
-        System.out.println("Content codec: " + codec);
         final String sender = context.getConfiguration().pushNotificationConfig().url() ;
         ACLMessage m = new ACLMessage(illoc, content, sender, codec);
         this.execute(m, eventQueue);
