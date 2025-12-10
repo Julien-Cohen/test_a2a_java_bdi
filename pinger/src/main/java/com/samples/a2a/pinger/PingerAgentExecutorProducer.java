@@ -1,6 +1,5 @@
 package com.samples.a2a.pinger;
 
-
 import io.a2a.A2A;
 import io.a2a.server.agentexecution.AgentExecutor;
 import io.a2a.server.agentexecution.RequestContext;
@@ -9,6 +8,7 @@ import io.a2a.server.tasks.TaskUpdater;
 import io.a2a.spec.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
+import mosaico.acl.BDIAgentExecutor;
 
 
 /**
@@ -58,7 +58,7 @@ public final class PingerAgentExecutorProducer extends BDIAgentExecutor {
                 System.out.println("Synchronous reply OK.");
                 eventQueue.enqueueEvent(A2A.toAgentMessage("OK : achieve/do_ping received."));
                 System.out.println("Send PING to other agent.");
-                BDIAgentExecutor.spawn_send_ping(otherAgentUrl, myUrl, "achieve", "atom", messageText);
+                BDIAgentExecutor.spawn_send_message(otherAgentUrl, myUrl, "achieve", "atom", messageText);
                 System.out.println("End spawn sending thread.");
             }
             else {
