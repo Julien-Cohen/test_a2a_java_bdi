@@ -224,11 +224,23 @@ public abstract class BDIAgentExecutor implements AgentExecutor {
         }
         return textBuilder.toString();
     }
-/*
+
     @Override
     public void execute(final RequestContext context,
                         final EventQueue eventQueue) throws JSONRPCError {
-    }*/
+        Message message = context.getMessage();
+        final String content = extractTextFromMessage(message);
+        final String illoc = extractIllocutionFromMessage(message);
+        System.out.println("Message illocution: " + illoc);
+        final String codec = extractCodecFromMessage(message);
+        System.out.println("Content codec: " + codec);
+        final String sender = context.getConfiguration().pushNotificationConfig().url() ;
+        ACLMessage m = new ACLMessage(illoc, content, sender, codec);
+        this.execute(m, eventQueue);
+    }
+
+    public abstract void execute(final ACLMessage message, final EventQueue eventQueue);
+
     @Override
     public void cancel(final RequestContext context,
                        final EventQueue eventQueue) throws JSONRPCError {

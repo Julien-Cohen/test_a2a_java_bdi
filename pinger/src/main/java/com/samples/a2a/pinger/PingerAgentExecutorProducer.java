@@ -8,6 +8,7 @@ import io.a2a.server.tasks.TaskUpdater;
 import io.a2a.spec.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
+import mosaico.acl.ACLMessage;
 import mosaico.acl.BDIAgentExecutor;
 
 
@@ -37,23 +38,17 @@ public final class PingerAgentExecutorProducer  {
         static final String otherAgentUrl = "http://127.0.0.1:9998";
 
         @Override
-        public void execute(final RequestContext context,
+        public void execute(final ACLMessage message,
                             final EventQueue eventQueue) throws JSONRPCError {
 
-            // extract the text from the message
-            Message message = context.getMessage();
-            final String assignment = extractTextFromMessage(message);
-            final String illoc = extractIllocutionFromMessage(message) ;
-            System.out.println("Message illocution: "+ illoc);
-            final String codec = extractCodecFromMessage(message);
-            System.out.println("Content codec: "+ codec);
 
-            if (assignment.equals("pong")&& illoc!= null && illoc.equals("tell")) {
+
+            if (message.content.equals("pong")&& message.illocution!= null && message.illocution.equals("tell")) {
                 eventQueue.enqueueEvent(A2A.toAgentMessage("OK : tell/pong received."));
                 System.out.println("Test OK : Received a tell/pong");
 
             }
-            else if (assignment.startsWith("do_ping") && illoc!= null && illoc.equals("achieve")){
+            else if (message.content.startsWith("do_ping") && message.illocution!= null && message.illocution.equals("achieve")){
                 System.out.println("achieve/do_ping received.");
                 System.out.println("Synchronous reply OK.");
                 eventQueue.enqueueEvent(A2A.toAgentMessage("OK : achieve/do_ping received."));
@@ -63,7 +58,7 @@ public final class PingerAgentExecutorProducer  {
             }
             else {
                 eventQueue.enqueueEvent(A2A.toAgentMessage("KO : Unknown request."));
-                System.out.println(assignment);
+                System.out.println(message.content);
                 System.out.println("Unknown request (only receive do_ping or pong requests)." );
                 System.exit(0);
             }
