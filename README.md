@@ -1,12 +1,7 @@
-# test_a2a_java_bdi
+# a2a-acl-java
 
-Test A2A agents, towards BDI A2A agents. 
+Support for A2A/ACL agents in Java. 
 
-Based on https://github.com/a2aproject/a2a-samples/tree/main/samples/java/agents/content_writer
+See a2a-acl-java-samples for examples of use.
 
-To run the agent : 
- ```bash
-   mvn quarkus:dev
-   ```
-
-You need a client to send a message to that agent. 
+Use maven to compile and install locally.
